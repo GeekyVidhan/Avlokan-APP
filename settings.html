@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1280, initial-scale=1" />
+<title>Avalokan — Settings</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fbf7f4; --card:#d89d63; --accent:#39b89f; --text:#2b2b2b; --white:#ffffff;
+    --shadow:0 16px 30px rgba(41,24,9,.08); --shadow-soft:0 10px 20px rgba(41,24,9,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:"Quicksand",system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+    opacity: 0; animation: fadeIn 0.4s ease-out forwards;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .wrap{max-width:1120px; margin:18px auto 120px; padding:0 18px; position: relative;}
+  header{display:flex;align-items:center;justify-content:space-between;position: relative;height: 60px;margin-bottom:18px;}
+  .h-left{display:flex;align-items:center;gap:12px; cursor:pointer; z-index: 1001;}
+  .menu-icon-stack{display:flex;flex-direction:column;gap:5px;width:24px;}
+  .menu-icon-stack span{height:4px;background:var(--card);border-radius:2px;}
+  .menu-text{font-size:20px;font-weight:700;color:#c98243;}
+  .brand{position:absolute;left:50%;transform:translateX(-50%);font-size:32px;font-weight:800;letter-spacing:.5px;color:#c98243; text-decoration: none;}
+  .gear{width:46px;height:46px;border-radius:12px;background:var(--card);display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:var(--shadow-soft);text-decoration:none;cursor:pointer;font-size:22px;}
+  .dropdown-menu{position:absolute;top:65px;left:0;z-index:1000;background:var(--white);border-radius:12px;box-shadow:var(--shadow);width:250px;padding:10px 0;opacity:0;visibility:hidden;transform:translateY(-10px) scale(.98);transform-origin:top left;transition:all .2s ease-out}
+  .dropdown-menu.open{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
+  .dropdown-menu a{display:block;padding:12px 20px;text-decoration:none;color:var(--text);font-weight:700;transition:background-color .2s}
+  .dropdown-menu a:hover{background-color:#f5f0eb;}
+  .page-title {font-size:36px;font-weight:700;color:#c98243; margin-bottom: 24px;}
+  .setting-card {background:var(--white);border-radius:18px;padding:22px;box-shadow:var(--shadow-soft);margin-bottom:18px;}
+  .setting-card h3 {margin:0 0 16px 0; font-size: 22px; color: var(--text);}
+  .setting-row {display:flex; align-items:center; justify-content:space-between; margin-bottom: 12px;}
+  .setting-label {font-weight: 600;}
+  .btn{background:var(--accent);color:#fff;border:none;border-radius:12px;padding:10px 16px;font-weight:700;cursor:pointer;text-decoration:none;box-shadow:0 8px 18px rgba(57,184,159,.1)}
+  .btn-secondary{background: #e9e2dc; color: var(--text);}
+  .btn-danger{background: #e57373; color: var(--white);}
+  a{color:inherit; text-decoration: none;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="h-left" id="menu-button">
+        <div class="menu-icon-stack"><span></span><span></span><span></span></div>
+        <div class="menu-text">Menu</div>
+      </div>
+      <a href="cool.html" class="brand">अवलोकन 🌸</a>
+      <a class="gear" href="settings.html">⚙️</a>
+      <nav id="dropdown-menu" class="dropdown-menu">
+        <a href="cool.html">🏠 Home</a>
+        <a href="roadmap.html">🗺️ Personal Roadmap</a>
+        <a href="journal.html">📓 Journal</a>
+        <a href="game.html">🎮 Mindful Pop</a>
+        <a href="avlokan_chatbot.html">💬 Chat with Avlokan</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2 class="page-title">Settings</h2>
+      
+      <div class="setting-card">
+        <h3>Appearance</h3>
+        <div class="setting-row">
+          <div class="setting-label">Theme</div>
+          <div>
+            <button class="btn btn-secondary">Light</button>
+            <button class="btn">Dark</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-label">Language</div>
+          <div>
+            <button class="btn">English</button>
+            <button class="btn btn-secondary">हिंदी</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-card">
+        <h3>Notifications</h3>
+        <div class="setting-row">
+          <div class="setting-label">Enable Push Notifications</div>
+          <button class="btn">Enable</button>
+        </div>
+      </div>
+
+      <div class="setting-card">
+        <h3>Account</h3>
+        <div class="setting-row">
+          <div class="setting-label">Manage Your Account</div>
+          <button class="btn btn-secondary">Manage</button>
+        </div>
+        <div class="setting-row">
+          <div class="setting-label">Log Out</div>
+          <button class="btn btn-danger">Log Out</button>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>
+    const menuButton = document.getElementById('menu-button');
+    const dropdownMenu = document.getElementById('dropdown-menu');
+    menuButton.addEventListener('click', (event) => { event.stopPropagation(); dropdownMenu.classList.toggle('open'); });
+    window.addEventListener('click', () => { if (dropdownMenu.classList.contains('open')) { dropdownMenu.classList.remove('open'); } });
+  </script>
+</body>
+</html>

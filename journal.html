@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1280, initial-scale=1" />
+<title>Avalokan — Journal</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fbf7f4; --card:#d89d63; --accent:#39b89f; --text:#2b2b2b; --white:#ffffff;
+    --shadow:0 16px 30px rgba(41,24,9,.08); --shadow-soft:0 10px 20px rgba(41,24,9,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:"Quicksand",system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+    opacity: 0; animation: fadeIn 0.4s ease-out forwards;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .wrap{max-width:1120px; margin:18px auto 120px; padding:0 18px; position: relative;}
+  header{display:flex;align-items:center;justify-content:space-between;position: relative;height: 60px;margin-bottom:18px;}
+  .h-left{display:flex;align-items:center;gap:12px; cursor:pointer; z-index: 1001;}
+  .menu-icon-stack{display:flex;flex-direction:column;gap:5px;width:24px;}
+  .menu-icon-stack span{height:4px;background:var(--card);border-radius:2px;}
+  .menu-text{font-size:20px;font-weight:700;color:#c98243;}
+  .brand{position:absolute;left:50%;transform:translateX(-50%);font-size:32px;font-weight:800;letter-spacing:.5px;color:#c98243; text-decoration: none;}
+  .gear{width:46px;height:46px;border-radius:12px;background:var(--card);display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:var(--shadow-soft);text-decoration:none;cursor:pointer;font-size:22px;}
+  .dropdown-menu{position:absolute;top:65px;left:0;z-index:1000;background:var(--white);border-radius:12px;box-shadow:var(--shadow);width:250px;padding:10px 0;opacity:0;visibility:hidden;transform:translateY(-10px) scale(.98);transform-origin:top left;transition:all .2s ease-out}
+  .dropdown-menu.open{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
+  .dropdown-menu a{display:block;padding:12px 20px;text-decoration:none;color:var(--text);font-weight:700;transition:background-color .2s}
+  .dropdown-menu a:hover{background-color:#f5f0eb;}
+  .btn{background:var(--accent);color:#fff;border:none;border-radius:24px;padding:10px 16px;font-weight:700;cursor:pointer;text-decoration:none;box-shadow:0 8px 18px rgba(57,184,159,.18)}
+  .journal-header {display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
+  .journal-title {font-size:36px;font-weight:700;color:#c98243;}
+  .entry-card {background:var(--white);border-radius:18px;padding:20px;box-shadow:var(--shadow-soft);margin-bottom:18px; position: relative;}
+  .entry-date {font-size:14px;font-weight:700;color:#b07a4f;margin-bottom:8px;}
+  .entry-content {line-height:1.6;color:var(--text);}
+  .delete-btn {position:absolute; top:15px; right:15px; background: #fbe9e7; color: #c62828; border:none; width:36px; height:36px; border-radius:50%; cursor:pointer; font-size:18px; display:grid; place-items:center; opacity:0.5; transition: opacity .2s;}
+  .entry-card:hover .delete-btn {opacity: 1;}
+  .modal-overlay {position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; display:flex; align-items:center; justify-content:center; opacity:0; visibility:hidden; transition: all .3s ease;}
+  .modal-overlay.visible {opacity:1; visibility:visible;}
+  .modal-box {background:var(--white); padding:24px; border-radius:18px; width:min(500px, 90%); box-shadow:var(--shadow); transform:scale(0.95); transition: transform .3s ease;}
+  .modal-overlay.visible .modal-box {transform:scale(1);}
+  .modal-box h3 {margin:0 0 16px 0; font-size:22px; color:var(--text);}
+  .modal-box textarea {width:100%; height:150px; border-radius:12px; border:2px solid #e9e2dc; padding:12px; font-family:inherit; font-size:16px; resize:vertical;}
+  .char-counter {font-size: 12px; color: #b07a4f; text-align: right; margin-top: 4px; display: block;}
+  .modal-actions {display:flex; justify-content:flex-end; gap:12px; margin-top:16px;}
+  .btn-secondary{background: #e9e2dc; color: var(--text);}
+  a{color:inherit; text-decoration: none;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="h-left" id="menu-button">
+        <div class="menu-icon-stack"><span></span><span></span><span></span></div>
+        <div class="menu-text">Menu</div>
+      </div>
+      <a href="cool.html" class="brand">अवलोकन 🌸</a>
+      <a class="gear" href="settings.html">⚙️</a>
+      <nav id="dropdown-menu" class="dropdown-menu">
+        <a href="cool.html">🏠 Home</a>
+        <a href="roadmap.html">🗺️ Personal Roadmap</a>
+        <a href="journal.html">📓 Journal</a>
+        <a href="avlokan_chatbot.html">💬 Chat with Avlokan</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="journal-header">
+        <div class="journal-title">Your Journal</div>
+        <button class="btn" id="add-entry-btn">➕ Add New Entry</button>
+      </div>
+      <div id="journal-list">
+        <!-- Journal entries will be dynamically inserted here -->
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="add-entry-modal">
+    <div class="modal-box">
+      <h3>What's on your mind?</h3>
+      <textarea id="journal-textarea" placeholder="Write your thoughts here..." maxlength="1000"></textarea>
+      <span id="char-counter" class="char-counter">0 / 1000</span>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="cancel-btn">Cancel</button>
+        <button class="btn" id="save-btn">Save Entry</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const menuButton = document.getElementById('menu-button');
+      const dropdownMenu = document.getElementById('dropdown-menu');
+      menuButton.addEventListener('click', (event) => { event.stopPropagation(); dropdownMenu.classList.toggle('open'); });
+      window.addEventListener('click', () => { if (dropdownMenu.classList.contains('open')) { dropdownMenu.classList.remove('open'); } });
+
+      const journalList = document.getElementById('journal-list');
+      const addEntryBtn = document.getElementById('add-entry-btn');
+      const modal = document.getElementById('add-entry-modal');
+      const cancelBtn = document.getElementById('cancel-btn');
+      const saveBtn = document.getElementById('save-btn');
+      const journalTextarea = document.getElementById('journal-textarea');
+      const charCounter = document.getElementById('char-counter');
+
+      const defaultEntries = [
+        { id: 16, date: "August 16, 2025", content: "Feeling grateful today. The sun was warm and I had a nice chat with a friend. It's the small things that make a big difference. Decided to list three things I'm thankful for before bed." },
+        { id: 15, date: "August 15, 2025", content: "Felt a bit overwhelmed today with the upcoming project deadline. The AI report on the home page was surprisingly accurate about my sleep. I tried the box breathing exercise from the chatbot, and it helped me calm down." },
+        { id: 14, date: "August 14, 2025", content: "Went for a walk without my phone today. It was strange at first, but then I started noticing the sounds of the birds and the feeling of the breeze. A good reminder to disconnect and be present." },
+        { id: 12, date: "August 12, 2025", content: "I haven't posted on Instagram in a while, and the app pointed that out. It's true, I've been avoiding it. Maybe I'll talk to the chatbot about the pressure to post online." },
+        { id: 10, date: "August 10, 2025", content: "Just starting this journal. The app feels calm and inviting. I like the warm colors. It feels less clinical than other apps I've tried. Let's see how this goes." },
+        { id: 8, date: "August 8, 2025", content: "Felt a bit lonely this evening. It's easy to feel like you're the only one struggling. I used the chatbot for a bit, and while it's not a person, it helped to just type out my feelings." },
+        { id: 7, date: "August 7, 2025", content: "Small win today! I finished the first task on my roadmap for the week. It wasn't a huge thing, but it feels good to check something off the list. Maybe I'm not as behind as I thought." },
+        { id: 5, date: "August 5, 2025", content: "Scrolling through social media made me feel worse today. Everyone's life looks so perfect. I know it's a highlight reel, but it's hard not to compare. Decided to limit my screen time." },
+        { id: 3, date: "August 3, 2025", content: "A slightly better day. I tried the '5-4-3-2-1 Grounding' exercise from the chatbot. It helped pull me out of my anxious thoughts for a few minutes. I should do that more often." },
+        { id: 1, date: "August 1, 2025", content: "A new month begins. Feeling a bit anxious about everything I need to get done. The roadmap seems daunting. Just trying to take it one day at a time." },
+      ];
+
+      let entries = [];
+
+      const saveEntries = () => localStorage.setItem('journalEntries', JSON.stringify(entries));
+      const loadEntries = () => {
+        const storedEntries = localStorage.getItem('journalEntries');
+        entries = storedEntries ? JSON.parse(storedEntries) : defaultEntries;
+      };
+
+      const renderEntries = () => {
+        journalList.innerHTML = '';
+        if (entries.length === 0) {
+          journalList.innerHTML = `<p style="text-align:center; color: var(--text);">Your journal is empty. Click 'Add New Entry' to start writing.</p>`;
+          return;
+        }
+        entries.sort((a, b) => b.id - a.id).forEach(entry => {
+          const entryCard = document.createElement('div');
+          entryCard.className = 'entry-card';
+          entryCard.innerHTML = `
+            <button class="delete-btn" data-id="${entry.id}">🗑️</button>
+            <div class="entry-date">${entry.date}</div>
+            <p class="entry-content">${entry.content.replace(/\n/g, '<br>')}</p>
+          `;
+          journalList.appendChild(entryCard);
+        });
+      };
+      
+      const addEntry = (content) => {
+        const newEntry = {
+          id: Date.now(),
+          date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+          content: content
+        };
+        entries.push(newEntry);
+        saveEntries();
+        renderEntries();
+      };
+
+      const deleteEntry = (id) => {
+        entries = entries.filter(entry => entry.id !== id);
+        saveEntries();
+        renderEntries();
+      };
+
+      addEntryBtn.addEventListener('click', () => {
+        journalTextarea.value = '';
+        charCounter.textContent = `0 / 1000`;
+        modal.classList.add('visible');
+        journalTextarea.focus();
+      });
+
+      cancelBtn.addEventListener('click', () => modal.classList.remove('visible'));
+
+      saveBtn.addEventListener('click', () => {
+        const content = journalTextarea.value.trim();
+        if (content) {
+          addEntry(content);
+          modal.classList.remove('visible');
+        }
+      });
+      
+      journalList.addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-btn')) {
+          const entryId = parseInt(e.target.getAttribute('data-id'));
+          if (confirm('Are you sure you want to delete this entry?')) {
+            deleteEntry(entryId);
+          }
+        }
+      });
+
+      journalTextarea.addEventListener('input', () => {
+        const count = journalTextarea.value.length;
+        charCounter.textContent = `${count} / 1000`;
+      });
+
+      loadEntries();
+      renderEntries();
+    });
+  </script>
+</body>
+</html>

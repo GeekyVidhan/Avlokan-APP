@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Roadmap</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #FDFCFB; --card-bg-color: #FFFFFF; --text-color: #8A7A6A; --heading-color: #D9A56F;
+            --progress-green: #8BC34A; --progress-orange: #FFA726; --progress-red: #EF5350; --progress-bg: #E0E0E0;
+            --light-green-bg: #F1F8E9; --border-color: #EEEEEE; --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 2rem; opacity: 0; animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .wrap { max-width: 1200px; margin: auto; position: relative; }
+        header { display: flex; align-items: center; justify-content: space-between; position: relative; height: 60px; margin-bottom: 1rem; }
+        .h-left { display: flex; align-items: center; gap: 12px; cursor: pointer; z-index: 1001; }
+        .menu-icon-stack { display: flex; flex-direction: column; gap: 5px; width: 24px; }
+        .menu-icon-stack span { height: 4px; background: var(--heading-color); border-radius: 2px; }
+        .menu-text { font-size: 1rem; font-weight: 700; color: var(--heading-color); }
+        .brand { position: absolute; left: 50%; transform: translateX(-50%); font-size: 32px; font-weight: 800; letter-spacing: .5px; color: var(--heading-color); text-decoration: none; }
+        .gear { width: 46px; height: 46px; border-radius: 12px; background: var(--heading-color); display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 10px 20px rgba(41,24,9,.06); text-decoration: none; cursor: pointer; font-size: 22px; }
+        .dropdown-menu { position: absolute; top: 65px; left: 0; z-index: 1000; background: var(--card-bg-color); border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); width: 250px; padding: 10px 0; opacity: 0; visibility: hidden; transform: translateY(-10px) scale(.98); transform-origin: top left; transition: all .2s ease-out; }
+        .dropdown-menu.open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+        .dropdown-menu a { display: block; padding: 12px 20px; text-decoration: none; color: var(--text-color); font-weight: 500; transition: background-color .2s; }
+        .dropdown-menu a:hover { background-color: #f9f9f9; }
+        .page-title { text-align: center; font-size: 2.5rem; font-weight: 600; color: var(--heading-color); margin-bottom: 2rem; }
+        .page-title .hindi-title { font-size: 2.2rem; margin-left: 15px; font-weight: 500; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; }
+        .card { background-color: var(--card-bg-color); border-radius: 16px; padding: 20px; box-shadow: var(--shadow); }
+        .roadmap-progress { grid-column: 1 / -1; display: flex; justify-content: space-around; align-items: center; }
+        .progress-item { text-align: center; width: 23%; }
+        .progress-item p { margin: 0 0 10px 0; font-size: 1rem; color: var(--heading-color); }
+        .progress-bar { width: 100%; height: 10px; background-color: var(--progress-bg); border-radius: 5px; overflow: hidden; }
+        .progress-bar-inner { height: 100%; border-radius: 5px; }
+        .yearly .progress-bar-inner { width: 50%; background-color: var(--progress-green); }
+        .monthly .progress-bar-inner { width: 60%; background-color: var(--progress-orange); }
+        .weekly .progress-bar-inner { width: 75%; background-color: var(--progress-orange); }
+        .daily .progress-bar-inner { width: 30%; background-color: var(--progress-red); }
+        .progress-label { margin-top: 8px; font-size: 1rem; }
+        .achievement-tracker { grid-column: 1 / 5; }
+        .daily-weekly-tasks { grid-column: 5 / 9; }
+        .practice-guidance { grid-column: 9 / -1; }
+        .card-title { font-size: 1.25rem; font-weight: 600; color: var(--heading-color); margin-bottom: 20px; }
+        .achievement-list { list-style: none; padding: 0; margin: 0; }
+        .achievement-item { display: flex; align-items: center; background-color: var(--light-green-bg); padding: 12px 15px; border-radius: 10px; margin-bottom: 10px; cursor: pointer; }
+        .achievement-item.completed { text-decoration: line-through; opacity: 0.7; }
+        .achievement-item input[type="checkbox"] { appearance: none; width: 20px; height: 20px; border: 2px solid var(--progress-green); border-radius: 5px; margin-right: 15px; cursor: pointer; position: relative; flex-shrink: 0; }
+        .achievement-item input[type="checkbox"]:checked { background-color: var(--progress-green); }
+        .achievement-item input[type="checkbox"]:checked::after { content: '✔'; color: white; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 14px; }
+        .task-list { list-style: none; padding: 0; margin: 0; }
+        .task-item { display: flex; align-items: center; padding: 15px; border: 1px solid var(--border-color); border-radius: 10px; margin-bottom: 15px; }
+        .task-icon { font-size: 1.5rem; width: 40px; text-align: center; margin-right: 15px; }
+        .task-details p { margin: 0; }
+        .task-title { font-weight: 500; color: #333; }
+        .task-due { font-size: 0.85rem; color: var(--text-color); }
+        .guidance-list { list-style: none; padding: 0; margin: 0; }
+        .guidance-item { display: flex; align-items: center; margin-bottom: 20px; }
+        .guidance-icon { width: 60px; height: 60px; background-color: #F8EADF; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0; font-size: 2rem; }
+        .guidance-details p { margin: 0; }
+        .guidance-title { font-weight: 600; color: #333; }
+        .guidance-description { font-size: 0.9rem; color: var(--heading-color); }
+        .get-tips-btn { width: 100%; padding: 15px; background-color: var(--heading-color); color: white; border: none; border-radius: 12px; font-size: 1rem; font-weight: 500; cursor: pointer; margin-top: 10px; }
+        .growth-metrics { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 20px; }
+        .metric-card { flex: 1; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <header>
+            <div class="h-left" id="menu-button">
+                <div class="menu-icon-stack"><span></span><span></span><span></span></div>
+                <div class="menu-text">Menu</div>
+            </div>
+            <a href="cool.html" class="brand">अवलोकन 🌸</a>
+            <a class="gear" href="settings.html">⚙️</a>
+            <nav id="dropdown-menu" class="dropdown-menu">
+                <a href="cool.html">🏠 Home</a>
+                <a href="roadmap.html">🗺️ Personal Roadmap</a>
+                <a href="journal.html">📓 Journal</a>
+                <a href="game.html">🎮 Mindful Pop</a>
+                <a href="avlokan_chatbot.html">💬 Chat with Avlokan</a>
+            </nav>
+        </header>
+
+        <h2 class="page-title">Personal Roadmap <span class="hindi-title">अवलोकन</span></h2>
+
+        <div class="dashboard-grid">
+            <div class="card roadmap-progress">
+                <div class="progress-item yearly"><p>Yearly</p><div class="progress-bar"><div class="progress-bar-inner"></div></div><p class="progress-label">2025</p></div>
+                <div class="progress-item monthly"><p>Monthly</p><div class="progress-bar"><div class="progress-bar-inner"></div></div><p class="progress-label">August</p></div>
+                <div class="progress-item weekly"><p>Weekly</p><div class="progress-bar"><div class="progress-bar-inner"></div></div><p class="progress-label">Week 1</p></div>
+                <div class="progress-item daily"><p>Daily</p><div class="progress-bar"><div class="progress-bar-inner"></div></div><p class="progress-label">Today</p></div>
+            </div>
+
+            <div class="card achievement-tracker">
+                <h2 class="card-title">Achievement Tracker</h2>
+                <ul class="achievement-list">
+                    <li class="achievement-item completed"><input type="checkbox" id="task1" checked><label for="task1">Completed Math Assignment</label></li>
+                    <li class="achievement-item completed"><input type="checkbox" id="task2" checked><label for="task2">Finished English Chapter 3</label></li>
+                    <li class="achievement-item"><input type="checkbox" id="task3"><label for="task3">Prepare Presentation Notes</label></li>
+                    <li class="achievement-item"><input type="checkbox" id="task4"><label for="task4">Revise Notes</label></li>
+                </ul>
+            </div>
+
+            <div class="card daily-weekly-tasks">
+                <h2 class="card-title">Daily and Weekly Task List</h2>
+                <ul class="task-list">
+                    <li class="task-item"><div class="task-icon">📝</div><div class="task-details"><p class="task-title">Prepare Science Report</p><p class="task-due">Due Monday</p></div></li>
+                    <li class="task-item"><div class="task-icon">📖</div><div class="task-details"><p class="task-title">Book Review</p><p class="task-due">Due Wednesday</p></div></li>
+                    <li class="task-item"><div class="task-icon">🗓️</div><div class="task-details"><p class="task-title">Meeting with Career Councillor</p><p class="task-due">Scheduled Next Week</p></div></li>
+                </ul>
+            </div>
+
+            <div class="card practice-guidance">
+                <h2 class="card-title">Practice Guidance</h2>
+                <ul class="guidance-list">
+                    <li class="guidance-item"><div class="guidance-icon">🚩</div><div class="guidance-details"><p class="guidance-title">Prioritize Tasks</p><p class="guidance-description">Break down large tasks into smaller steps.</p></div></li>
+                    <li class="guidance-item"><div class="guidance-icon">🗓️</div><div class="guidance-details"><p class="guidance-title">Study Block</p><p class="guidance-description">Allocate specific time for studying.</p></div></li>
+                    <li class="guidance-item"><div class="guidance-icon">❤️</div><div class="guidance-details"><p class="guidance-title">Mindfulness Break</p><p class="guidance-description">Take short breaks to reduce stress.</p></div></li>
+                </ul>
+                <button class="get-tips-btn">Get More Tips</button>
+            </div>
+
+            <div class="growth-metrics">
+                <div class="card metric-card"><p>Skill Development</p><div class="progress-bar yearly"><div class="progress-bar-inner"></div></div><p class="progress-label">+5%</p></div>
+                <div class="card metric-card"><p>Academic Growth</p><div class="progress-bar monthly"><div class="progress-bar-inner"></div></div><p class="progress-label">+12%</p></div>
+                <div class="card metric-card"><p>Personal Growth</p><div class="progress-bar daily"><div class="progress-bar-inner"></div></div><p class="progress-label">-3%</p></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const menuButton = document.getElementById('menu-button');
+        const dropdownMenu = document.getElementById('dropdown-menu');
+        menuButton.addEventListener('click', (event) => { event.stopPropagation(); dropdownMenu.classList.toggle('open'); });
+        window.addEventListener('click', () => { if (dropdownMenu.classList.contains('open')) { dropdownMenu.classList.remove('open'); } });
+    </script>
+</body>
+</html>

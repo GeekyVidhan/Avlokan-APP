@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mindful Bubble Pop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --bg:#fbf7f4; --card:#d89d63; --accent:#39b89f; --text:#2b2b2b; --white:#ffffff;
+            --shadow:0 16px 30px rgba(41,24,9,.08); --shadow-soft:0 10px 20px rgba(41,24,9,.06);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #FFE4B5, #FFDAB9, #FFA07A, #FFC0CB, #DDA0DD);
+            background-size: 400% 400%;
+            animation: color-shift 30s ease-in-out infinite;
+        }
+        @keyframes color-shift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        canvas { display: block; background-color: rgba(255, 255, 255, 0.1); cursor: pointer; }
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white; pointer-events: none; }
+        .title { font-size: 3rem; font-weight: 600; text-shadow: 2px 2px 8px rgba(0,0,0,0.2); }
+        .subtitle { font-size: 1.25rem; margin-top: 0.5rem; text-shadow: 1px 1px 4px rgba(0,0,0,0.2); }
+        .button-container { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; }
+        .control-button { padding: 10px 20px; background-color: rgba(255, 255, 255, 0.3); color: white; border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 20px; cursor: pointer; font-size: 1rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .control-button:hover { background-color: rgba(255, 255, 255, 0.5); box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+        #breathing-guide { position: absolute; top: 100px; /* Adjusted for header */ left: 50%; transform: translateX(-50%); display: flex; align-items: center; color: white; text-shadow: 1px 1px 4px rgba(0,0,0,0.2); }
+        #breathing-circle { width: 30px; height: 30px; background-color: rgba(255, 255, 255, 0.5); border-radius: 50%; margin-right: 15px; animation: breathe 8s ease-in-out infinite; }
+        #breathing-text { font-size: 1.2rem; }
+        @keyframes breathe { 0% { transform: scale(0.8); } 50% { transform: scale(1.2); } 100% { transform: scale(0.8); } }
+        #mindful-message { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; color: white; text-shadow: 2px 2px 8px rgba(0,0,0,0.3); opacity: 0; transition: opacity 1s ease-in-out; pointer-events: none; }
+        
+        /* --- Integrated Header Styles --- */
+        header{position:absolute; top:0; left:0; width:100%; z-index: 100; padding: 18px; display:flex;align-items:center;justify-content:space-between;}
+        .h-left{display:flex;align-items:center;gap:12px; cursor:pointer; z-index: 1001;}
+        .menu-icon-stack{display:flex;flex-direction:column;gap:5px;width:24px;}
+        .menu-icon-stack span{height:4px;background:var(--white);border-radius:2px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);}
+        .menu-text{font-family:"Quicksand",sans-serif; font-size:20px;font-weight:700;color:var(--white); text-shadow: 1px 1px 3px rgba(0,0,0,0.2);}
+        .gear{width:46px;height:46px;border-radius:12px;background:rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:var(--shadow-soft);text-decoration:none;cursor:pointer;font-size:22px;}
+        .dropdown-menu{position:absolute;top:85px;left:18px;z-index:1000;background:var(--white);border-radius:12px;box-shadow:var(--shadow);width:250px;padding:10px 0;opacity:0;visibility:hidden;transform:translateY(-10px) scale(.98);transform-origin:top left;transition:all .2s ease-out}
+        .dropdown-menu.open{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
+        .dropdown-menu a{font-family:"Quicksand",sans-serif; display:block;padding:12px 20px;text-decoration:none;color:var(--text);font-weight:700;transition:background-color .2s}
+        .dropdown-menu a:hover{background-color:#f5f0eb;}
+        a{color:inherit}
+    </style>
+</head>
+<body>
+    <header>
+      <div class="h-left" id="menu-button">
+        <div class="menu-icon-stack"><span></span><span></span><span></span></div>
+        <div class="menu-text">Menu</div>
+      </div>
+      <a class="gear" href="settings.html">⚙️</a>
+      <nav id="dropdown-menu" class="dropdown-menu">
+        <a href="cool.html">🏠 Home</a>
+        <a href="roadmap.html">🗺️ Personal Roadmap</a>
+        <a href="journal.html">📓 Journal</a>
+        <a href="game.html">🎮 Mindful Pop</a>
+        <a href="avlokan_chatbot.html">💬 Chat with Avlokan</a>
+      </nav>
+    </header>
+
+    <canvas id="gameCanvas"></canvas>
+    <div class="overlay">
+        <h1 class="title">Bubble Pop</h1>
+        <p class="subtitle">A moment of calm</p>
+    </div>
+    <div id="breathing-guide">
+        <div id="breathing-circle"></div>
+        <span id="breathing-text">Breathe In...</span>
+    </div>
+    <div class="button-container">
+        <button id="zenModeButton" class="control-button">Zen Mode: OFF</button>
+        <button id="muteButton" class="control-button">Mute</button>
+    </div>
+    <div id="mindful-message"></div>
+
+    <script>
+        // --- Menu Logic ---
+        const menuButton = document.getElementById('menu-button');
+        const dropdownMenu = document.getElementById('dropdown-menu');
+        menuButton.addEventListener('click', (event) => { event.stopPropagation(); dropdownMenu.classList.toggle('open'); });
+        window.addEventListener('click', () => { if (dropdownMenu.classList.contains('open')) { dropdownMenu.classList.remove('open'); } });
+
+        // --- Game Logic ---
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const zenModeButton = document.getElementById('zenModeButton');
+        const muteButton = document.getElementById('muteButton');
+        const breathingText = document.getElementById('breathing-text');
+        const mindfulMessage = document.getElementById('mindful-message');
+
+        const popSynth = new Tone.PolySynth(Tone.FMSynth, { harmonicity: 2, modulationIndex: 3, envelope: { attack: 0.001, decay: 0.2, sustain: 0.01, release: 0.3 }, modulationEnvelope: { attack: 0.01, decay: 0.1, sustain: 0.01, release: 0.2 } }).toDestination();
+        popSynth.volume.value = -6;
+        const ambientSynth = new Tone.AMSynth({ harmonicity: 1.5, envelope: { attack: 2, decay: 1, sustain: 0.8, release: 5 }, modulationEnvelope: { attack: 3, decay: 1, sustain: 1, release: 5 } }).toDestination();
+        ambientSynth.volume.value = -25;
+        const ambientLoop = new Tone.Loop(time => { ambientSynth.triggerAttackRelease("C2", "8n", time); }, "2n").start(0);
+
+        let bubbles = [], particles = [], isZenMode = false, bubbleInterval = 700, popCounter = 0;
+        const mindfulMessages = ["Let a worry float away", "Find your center", "Be present in this moment", "Release the tension", "Inhale peace, exhale noise", "You are calm and steady"];
+        const bubbleColors = ['rgba(255, 165, 0, 0.7)', 'rgba(255, 140, 0, 0.7)', 'rgba(255, 127, 80, 0.7)', 'rgba(255, 218, 185, 0.7)', 'rgba(240, 128, 128, 0.7)', 'rgba(221, 160, 221, 0.7)'];
+        const melodicScale = ['C4', 'D4', 'E4', 'G4', 'A4', 'C5'];
+
+        function setupCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        class Particle { constructor(x, y, color) { this.x = x; this.y = y; this.color = color.replace('0.7', '1.0'); this.radius = Math.random() * 3 + 1; this.life = 1; this.speed = Math.random() * 3 + 1; const angle = Math.random() * Math.PI * 2; this.vx = Math.cos(angle) * this.speed; this.vy = Math.sin(angle) * this.speed; } update() { this.x += this.vx; this.y += this.vy; this.life -= 0.02; this.vx *= 0.98; this.vy *= 0.98; } draw() { ctx.save(); ctx.globalAlpha = this.life > 0 ? this.life : 0; ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fillStyle = this.color; ctx.fill(); ctx.restore(); } }
+        class Bubble { constructor(x, y, radius, color, speed) { this.x = x; this.y = y; this.radius = radius; this.color = color; this.speed = speed; this.drift = (Math.random() - 0.5) * 0.3; this.angle = Math.random() * Math.PI * 2; this.wobbleSpeed = Math.random() * 0.02 + 0.01; this.wobbleAmount = this.radius * 0.05; } update() { this.y -= this.speed; this.angle += this.wobbleSpeed; this.x += this.drift + Math.sin(this.angle) * this.wobbleAmount; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false); ctx.fillStyle = this.color; ctx.fill(); const gradient = ctx.createRadialGradient(this.x - this.radius * 0.3, this.y - this.radius * 0.3, 0, this.x - this.radius * 0.3, this.y - this.radius * 0.3, this.radius * 0.7); gradient.addColorStop(0, 'rgba(255, 255, 255, 0.4)'); gradient.addColorStop(1, 'rgba(255, 255, 255, 0)'); ctx.fillStyle = gradient; ctx.fill(); } }
+        function addBubble() { const baseSpeed = isZenMode ? 0.7 : 1.5; const radius = Math.random() * 40 + 20; const x = Math.random() * (canvas.width - radius * 2) + radius; const y = canvas.height + radius * 2; const color = bubbleColors[Math.floor(Math.random() * bubbleColors.length)]; const speed = Math.random() * baseSpeed + 0.5; bubbles.push(new Bubble(x, y, radius, color, speed)); }
+        function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); bubbles.forEach((b, i) => { b.update(); b.draw(); if (b.y < -b.radius) bubbles.splice(i, 1); }); particles.forEach((p, i) => { p.update(); p.draw(); if (p.life <= 0) particles.splice(i, 1); }); requestAnimationFrame(animate); }
+        function showMindfulMessage() { const message = mindfulMessages[Math.floor(Math.random() * mindfulMessages.length)]; mindfulMessage.textContent = message; mindfulMessage.style.opacity = 1; setTimeout(() => { mindfulMessage.style.opacity = 0; }, 3000); }
+        function handlePop(event) {
+            if (Tone.context.state !== 'running') { Tone.start(); Tone.Transport.start(); }
+            const rect = canvas.getBoundingClientRect(); const clientX = event.touches ? event.touches[0].clientX : event.clientX; const clientY = event.touches ? event.touches[0].clientY : event.clientY; const mouseX = clientX - rect.left; const mouseY = clientY - rect.top;
+            for (let i = bubbles.length - 1; i >= 0; i--) {
+                const bubble = bubbles[i];
+                if (Math.hypot(mouseX - bubble.x, mouseY - bubble.y) < bubble.radius) {
+                    for (let j = 0; j < 15; j++) particles.push(new Particle(bubble.x, bubble.y, bubble.color));
+                    popSynth.triggerAttackRelease(melodicScale[Math.floor(Math.random() * melodicScale.length)], '8n');
+                    bubbles.splice(i, 1);
+                    popCounter++;
+                    if (popCounter % 25 === 0) { showMindfulMessage(); }
+                    break;
+                }
+            }
+        }
+        let bubbleSpawner = setInterval(addBubble, bubbleInterval);
+        zenModeButton.addEventListener('click', () => { isZenMode = !isZenMode; zenModeButton.textContent = `Zen Mode: ${isZenMode ? 'ON' : 'OFF'}`; zenModeButton.style.backgroundColor = isZenMode ? 'rgba(255, 127, 80, 0.5)' : 'rgba(255, 255, 255, 0.3)'; clearInterval(bubbleSpawner); bubbleInterval = isZenMode ? 1500 : 700; bubbleSpawner = setInterval(addBubble, bubbleInterval); });
+        muteButton.addEventListener('click', () => { Tone.Destination.mute = !Tone.Destination.mute; muteButton.textContent = Tone.Destination.mute ? 'Unmute' : 'Mute'; });
+        setInterval(() => { breathingText.textContent = breathingText.textContent === 'Breathe In...' ? 'Breathe Out...' : 'Breathe In...'; }, 4000);
+        canvas.addEventListener('mousedown', handlePop);
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handlePop(e); });
+        window.addEventListener('resize', setupCanvas);
+        setupCanvas();
+        animate();
+    </script>
+</body>
+</html>

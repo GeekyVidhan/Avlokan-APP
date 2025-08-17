@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1280, initial-scale=1" />
+<title>Avalokan — Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fbf7f4; --card:#d89d63; --accent:#39b89f; --text:#2b2b2b; --white:#ffffff;
+    --shadow:0 16px 30px rgba(41,24,9,.08); --shadow-soft:0 10px 20px rgba(41,24,9,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:"Quicksand",system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+    opacity: 0; animation: fadeIn 0.4s ease-out forwards;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .wrap{max-width:1120px; margin:18px auto 120px; padding:0 18px; position: relative;}
+  header{display:flex;align-items:center;justify-content:space-between;position: relative;height: 60px;margin-bottom:18px;}
+  .h-left{display:flex;align-items:center;gap:12px; cursor:pointer; z-index: 1001;}
+  .menu-icon-stack{display:flex;flex-direction:column;gap:5px;width:24px;}
+  .menu-icon-stack span{height:4px;background:var(--card);border-radius:2px;}
+  .menu-text{font-size:20px;font-weight:700;color:#c98243;}
+  .brand{position:absolute;left:50%;transform:translateX(-50%);font-size:32px;font-weight:800;letter-spacing:.5px;color:#c98243; text-decoration: none;}
+  .gear{width:46px;height:46px;border-radius:12px;background:var(--card);display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:var(--shadow-soft);text-decoration:none;cursor:pointer;font-size:22px;}
+  .dropdown-menu{position:absolute;top:65px;left:0;z-index:1000;background:var(--white);border-radius:12px;box-shadow:var(--shadow);width:250px;padding:10px 0;opacity:0;visibility:hidden;transform:translateY(-10px) scale(.98);transform-origin:top left;transition:all .2s ease-out}
+  .dropdown-menu.open{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
+  .dropdown-menu a{display:block;padding:12px 20px;text-decoration:none;color:var(--text);font-weight:700;transition:background-color .2s}
+  .dropdown-menu a:hover{background-color:#f5f0eb;}
+  .block{background:var(--card);border-radius:20px;box-shadow:var(--shadow);padding:22px;color:#fff}
+  .screen-time{position:relative}
+  .screen-title{font-size:26px;font-weight:700;margin-bottom:6px}
+  .screen-sub{opacity:.9}
+  .progress-rail{margin-top:14px;height:12px;border-radius:10px;background:rgba(255,255,255,.55);overflow:hidden}
+  .progress{height:100%;width:68%;background:linear-gradient(90deg,#ffa83b,#ff7a3e)}
+  .hourglass{position:absolute;right:22px;top:18px;font-size:28px;opacity:.95}
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:8px}
+  .tile{background:var(--card);color:#fff;text-align:center;border-radius:16px;padding:40px 10px;box-shadow:var(--shadow);cursor:pointer;text-decoration:none;display:block}
+  .tile .icon{width:72px;height:72px;border-radius:14px;background:rgba(0,0,0,.08);margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:44px;color:#fff}
+  .tile .title{font-size:20px;font-weight:700}
+  .tile .sub{opacity:.95}
+  .report{background:var(--card);color:#fff;border-radius:20px;padding:22px;box-shadow:var(--shadow);margin-top:8px}
+  .report h3{margin:0 0 8px 0;font-size:26px;font-weight:700}
+  .report p{margin:6px 0;opacity:.95}
+  .report-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:10px}
+  .pill{background:var(--accent);color:#fff;border:none;border-radius:22px;padding:10px 16px;font-weight:700;text-decoration:none;display:inline-block;box-shadow:0 8px 18px rgba(57,184,159,.18)}
+  .pill.secondary{background:transparent;border:2px solid var(--accent);color:var(--accent)}
+  .fab{position:fixed;right:32px;bottom:32px;background:#efcfb1;color:#c67c3d;width:96px;height:96px;border-radius:24px;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;text-decoration:none}
+  .fab span{font-size:34px;margin-top:-4px}
+  .fab small{margin-top:6px;font-weight:700}
+  a{color:inherit}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="h-left" id="menu-button">
+        <div class="menu-icon-stack"><span></span><span></span><span></span></div>
+        <div class="menu-text">Menu</div>
+      </div>
+      <a href="cool.html" class="brand">अवलोकन 🌸</a>
+      <a class="gear" href="settings.html">⚙️</a>
+      <nav id="dropdown-menu" class="dropdown-menu">
+        <a href="cool.html">🏠 Home</a>
+        <a href="roadmap.html">🗺️ Personal Roadmap</a>
+        <a href="journal.html">📓 Journal</a>
+        <a href="game.html">🎮 Mindful Pop</a>
+        <a href="avlokan_chatbot.html">💬 Chat with Avlokan</a>
+      </nav>
+    </header>
+
+    <section class="block screen-time">
+      <div class="screen-title">Screen Time</div>
+      <div class="screen-sub">1h 54m today</div>
+      <div class="progress-rail"><div class="progress"></div></div>
+      <div class="hourglass">⏳</div>
+    </section>
+
+    <div class="tiles" style="margin-top:22px">
+      <a class="tile" href="roadmap.html"><div class="icon">🗺️</div><div class="title">Roadmap</div><div class="sub">Track your progress.</div></a>
+      <a class="tile" href="journal.html"><div class="icon">📓</div><div class="title">Journal</div><div class="sub">A quiet place for thoughts.</div></a>
+      <a class="tile" href="avlokan_chatbot.html"><div class="icon" style="background:#e7603a33;border:0">💬</div><div class="title">Chat Now</div><div class="sub">Talk to your AI companion.</div></a>
+      <a class="tile" href="game.html"><div class="icon" style="background:#81D4FA33">🫧</div><div class="title">Mindful Pop</div><div class="sub">A moment of calm.</div></a>
+    </div>
+
+    <section class="report" style="margin-top:26px">
+      <h3>Your Deep Mental Health and Social Media AI Analysis Report</h3>
+      <p>You haven't posted on Instagram in 7 months.</p>
+      <p>You didn't Sleep well last night.</p>
+      <p>Your heart rate has been up by 50% today.</p>
+      <p>A negative comment has popped up on your post.</p>
+      <div class="report-actions">
+        <a class="pill" href="#">View Details</a>
+        <a class="pill secondary" href="avlokan_chatbot.html">Talk about it</a>
+      </div>
+    </section>
+  </div>
+
+  <a class="fab" href="avlokan_chatbot.html" aria-label="Open Chat"><span>💬</span><small>Chat</small></a>
+  <script>
+    const menuButton = document.getElementById('menu-button');
+    const dropdownMenu = document.getElementById('dropdown-menu');
+    menuButton.addEventListener('click', (event) => { event.stopPropagation(); dropdownMenu.classList.toggle('open'); });
+    window.addEventListener('click', () => { if (dropdownMenu.classList.contains('open')) { dropdownMenu.classList.remove('open'); } });
+  </script>
+</body>
+</html>
